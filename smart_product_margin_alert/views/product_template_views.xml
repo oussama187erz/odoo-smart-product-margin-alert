@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Product Template Form View - Margin Intelligence Tab -->
+    <record id="product_template_form_view_margin_intelligence" model="ir.ui.view">
+        <field name="name">product.template.form.margin.intelligence</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="priority" eval="25"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Margin Intelligence" name="margin_intelligence" groups="smart_product_margin_alert.group_margin_user">
+                    
+                    <!-- Contextual Status Alert Banners -->
+                    <div class="alert alert-danger d-flex align-items-center mb-3" role="alert" invisible="margin_status != 'negative' or not margin_monitoring_enabled">
+                        <i class="fa fa-exclamation-triangle fa-2x me-3 text-danger"></i>
+                        <div>
+                            <strong>Critical Margin Alert — Loss-Making Product</strong>
+                            <div class="small">The current catalog sales price is lower than the product cost. Every sale results in a direct financial loss. Please adjust the sales price or cost immediately.</div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning d-flex align-items-center mb-3" role="alert" invisible="margin_status != 'low' or not margin_monitoring_enabled">
+                        <i class="fa fa-exclamation-circle fa-2x me-3 text-warning"></i>
+                        <div>
+                            <strong>Low Margin Warning — Below Minimum Target</strong>
+                            <div class="small">The current margin (<field name="current_margin_percent" readonly="1" class="fw-bold"/>%) falls below the configured target threshold (<field name="min_margin_percent" readonly="1" class="fw-bold"/>%).</div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-success d-flex align-items-center mb-3" role="alert" invisible="margin_status != 'healthy' or not margin_monitoring_enabled">
+                        <i class="fa fa-check-circle fa-2x me-3 text-success"></i>
+                        <div>
+                            <strong>Compliant Profitability Target</strong>
+                            <div class="small">This product satisfies all company gross profit margin requirements (<field name="current_margin_percent" readonly="1" class="fw-bold"/>% margin achieved).</div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <!-- Group 1: Configuration -->
+                        <div class="col-12 col-md-4">
+                            <div class="card h-100 border-0 shadow-sm p-3 bg-light rounded-3">
+                                <h6 class="fw-bold text-primary mb-3">
+                                    <i class="fa fa-sliders me-2"></i>Configuration
+                                </h6>
+                                <group>
+                                    <field name="margin_monitoring_enabled"/>
+                                    <label for="min_margin_percent" invisible="not margin_monitoring_enabled"/>
+                                    <div class="d-flex align-items-center" invisible="not margin_monitoring_enabled">
+                                        <field name="min_margin_percent" class="oe_inline"/>
+                                        <span class="ms-1 fw-bold">%</span>
+                                    </div>
+                                    <field name="margin_alert_mode" invisible="not margin_monitoring_enabled"/>
+                                </group>
+                            </div>
+                        </div>
+
+                        <!-- Group 2: Profitability Metrics -->
+                        <div class="col-12 col-md-4">
+                            <div class="card h-100 border-0 shadow-sm p-3 bg-light rounded-3">
+                                <h6 class="fw-bold text-dark mb-3">
+                                    <i class="fa fa-line-chart me-2 text-primary"></i>Profitability
+                                </h6>
+                                <group>
+                                    <field name="standard_price" string="Cost Price" widget="monetary"/>
+                                    <field name="list_price" string="Sales Price" widget="monetary"/>
+                                    <field name="profit_amount" widget="monetary" class="fw-bold"/>
+                                    <label for="current_margin_percent"/>
+                                    <div class="d-flex align-items-center">
+                                        <field name="current_margin_percent" class="fw-bold oe_inline"/>
+                                        <span class="ms-1 fw-bold">%</span>
+                                    </div>
+                                </group>
+                            </div>
+                        </div>
+
+                        <!-- Group 3: Status & Governance -->
+                        <div class="col-12 col-md-4">
+                            <div class="card h-100 border-0 shadow-sm p-3 bg-light rounded-3">
+                                <h6 class="fw-bold text-dark mb-3">
+                                    <i class="fa fa-shield me-2 text-primary"></i>Status &amp; Risk
+                                </h6>
+                                <group>
+                                    <field name="margin_status" widget="badge"
+                                        decoration-success="margin_status == 'healthy'"
+                                        decoration-warning="margin_status == 'low'"
+                                        decoration-danger="margin_status == 'negative'"/>
+                                    <field name="margin_risk_level" widget="badge"
+                                        decoration-success="margin_risk_level == 'low'"
+                                        decoration-warning="margin_risk_level == 'medium'"
+                                        decoration-danger="margin_risk_level == 'high'"/>
+                                </group>
+                                <div class="mt-3">
+                                    <button name="action_view_margin_history" type="object"
+                                        string="Sales History &amp; Margin Realization"
+                                        icon="fa-history" class="btn btn-outline-secondary btn-sm w-100"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Product Margin Monitor List View -->
+    <record id="view_product_template_margin_list" model="ir.ui.view">
+        <field name="name">product.template.margin.monitor.list</field>
+        <field name="model">product.template</field>
+        <field name="arch" type="xml">
+            <list string="Product Margin Monitor"
+                decoration-danger="margin_status == 'negative'"
+                decoration-warning="margin_status == 'low'"
+                decoration-success="margin_status == 'healthy'">
+                <field name="default_code" optional="show"/>
+                <field name="name" string="Product"/>
+                <field name="type" string="Type" optional="show"/>
+                <field name="standard_price" string="Cost" widget="monetary"/>
+                <field name="list_price" string="Sales Price" widget="monetary"/>
+                <field name="profit_amount" string="Profit Amount" widget="monetary"/>
+                <field name="current_margin_percent" string="Margin (%)" decoration-danger="margin_status == 'negative'" decoration-warning="margin_status == 'low'" decoration-success="margin_status == 'healthy'"/>
+                <field name="min_margin_percent" string="Min Target (%)"/>
+                <field name="margin_status" string="Status" widget="badge"
+                    decoration-success="margin_status == 'healthy'"
+                    decoration-warning="margin_status == 'low'"
+                    decoration-danger="margin_status == 'negative'"/>
+                <field name="margin_alert_mode" string="Alert Mode" widget="badge"
+                    decoration-danger="margin_alert_mode == 'block'"
+                    decoration-warning="margin_alert_mode == 'warning'"
+                    decoration-muted="margin_alert_mode == 'disabled'"/>
+                <field name="currency_id" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Product Margin Monitor Search View -->
+    <record id="view_product_template_margin_search" model="ir.ui.view">
+        <field name="name">product.template.margin.monitor.search</field>
+        <field name="model">product.template</field>
+        <field name="arch" type="xml">
+            <search string="Search Product Margin">
+                <field name="name" string="Product" filter_domain="['|', ('name', 'ilike', self), ('default_code', 'ilike', self)]"/>
+                <field name="categ_id" string="Category"/>
+
+                <filter string="Monitored Products" name="filter_monitored" domain="[('margin_monitoring_enabled', '=', True)]"/>
+                <separator/>
+                <filter string="Healthy Margin" name="filter_healthy" domain="[('margin_status', '=', 'healthy'), ('margin_monitoring_enabled', '=', True)]"/>
+                <filter string="Low Margin Alert" name="filter_low" domain="[('margin_status', '=', 'low'), ('margin_monitoring_enabled', '=', True)]"/>
+                <filter string="Loss-Making / Negative" name="filter_negative" domain="[('margin_status', '=', 'negative'), ('margin_monitoring_enabled', '=', True)]"/>
+                <separator/>
+                <filter string="Block Confirmation Mode" name="filter_block_mode" domain="[('margin_alert_mode', '=', 'block'), ('margin_monitoring_enabled', '=', True)]"/>
+                <filter string="Warning Mode" name="filter_warning_mode" domain="[('margin_alert_mode', '=', 'warning'), ('margin_monitoring_enabled', '=', True)]"/>
+
+                <group expand="0" string="Group By">
+                    <filter string="Margin Status" name="group_margin_status" context="{'group_by': 'margin_status'}"/>
+                    <filter string="Alert Mode" name="group_margin_alert_mode" context="{'group_by': 'margin_alert_mode'}"/>
+                    <filter string="Category" name="group_category" context="{'group_by': 'categ_id'}"/>
+                    <filter string="Product Type" name="group_type" context="{'group_by': 'type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Product Margin Monitor Action -->
+    <record id="action_product_margin_monitor" model="ir.actions.act_window">
+        <field name="name">Product Margin Monitor</field>
+        <field name="res_model">product.template</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="view_id" ref="view_product_template_margin_list"/>
+        <field name="search_view_id" ref="view_product_template_margin_search"/>
+        <field name="context">{'search_default_filter_monitored': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No monitored products found
+            </p>
+            <p>
+                Configure products with gross margin monitoring to track profitability, identify low-margin items, and prevent sales below cost.
+            </p>
+        </field>
+    </record>
+
+</odoo>

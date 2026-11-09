@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Healthy High-Margin Hardware -->
+        <record id="demo_product_cloud_server" model="product.template">
+            <field name="name">Enterprise Cloud Server Rack 42U</field>
+            <field name="default_code">SRV-42U-PRO</field>
+            <field name="type">consu</field>
+            <field name="list_price">4800.00</field>
+            <field name="standard_price">2800.00</field>
+            <field name="margin_monitoring_enabled">True</field>
+            <field name="min_margin_percent">25.0</field>
+            <field name="margin_alert_mode">block</field>
+        </record>
+
+        <!-- Healthy High-Margin Software -->
+        <record id="demo_product_ai_software" model="product.template">
+            <field name="name">AI Analytics Enterprise Platform License</field>
+            <field name="default_code">LIC-AI-ENT</field>
+            <field name="type">service</field>
+            <field name="list_price">1500.00</field>
+            <field name="standard_price">450.00</field>
+            <field name="margin_monitoring_enabled">True</field>
+            <field name="min_margin_percent">30.0</field>
+            <field name="margin_alert_mode">block</field>
+        </record>
+
+        <!-- Healthy Services -->
+        <record id="demo_product_consulting" model="product.template">
+            <field name="name">Senior Enterprise Architecture Consulting (Day)</field>
+            <field name="default_code">SRV-ARCH-CONS</field>
+            <field name="type">service</field>
+            <field name="list_price">1200.00</field>
+            <field name="standard_price">700.00</field>
+            <field name="margin_monitoring_enabled">True</field>
+            <field name="min_margin_percent">25.0</field>
+            <field name="margin_alert_mode">warning</field>
+        </record>
+
+        <!-- Healthy Network Hardware -->
+        <record id="demo_product_network_switch" model="product.template">
+            <field name="name">Managed Fiber Switch 48-Port PoE+</field>
+            <field name="default_code">NET-SW-48POE</field>
+            <field name="type">consu</field>
+            <field name="list_price">1850.00</field>
+            <field name="standard_price">1350.00</field>
+            <field name="margin_monitoring_enabled">True</field>
+            <field name="min_margin_percent">20.0</field>
+            <field name="margin_alert_mode">block</field>
+        </record>
+
+        <!-- Healthy Workstation -->
+        <record id="demo_product_workstation" model="product.template">
+            <field name="name">Precision Developer Workstation Ultra</field>
+            <field name="default_code">WS-DEV-ULTRA</field>
+            <field name="type">consu</field>
+            <field name="list_price">2100.00</field>
+            <field name="standard_price">1600.00</field>
+            <field name="margin_monitoring_enabled">True</field>
+            <field name="min_margin_percent">20.0</field>
+            <field name="margin_alert_mode">warning</field>
+        </record>
+
+        <!-- Low Margin - Warning Mode (Cable) -->
+        <record id="demo_product_cat6_cable" model="product.template">
+            <field name="name">Cat6A Shielded Gigabit Cable 10m</field>
+            <field name="default_code">CAB-CAT6A-10M</field>
+            <field name="type">consu</field>
+            <field name="list_price">22.00</field>
+            <field name="standard_price">19.50</field>
+            <field name="margin_monitoring_enabled">True</field>
+            <field name="min_margin_percent">20.0</field>
+            <field name="margin_alert_mode">warning</field>
+        </record>
+
+        <!-- Low Margin - Block Mode (Dock) -->
+        <record id="demo_product_usb_dock" model="product.template">
+            <field name="name">Thunderbolt 4 Dual-Display Docking Station</field>
+            <field name="default_code">DOCK-TB4-PRO</field>
+            <field name="type">consu</field>
+            <field name="list_price">115.00</field>
+            <field name="standard_price">105.00</field>
+            <field name="margin_monitoring_enabled">True</field>
+            <field name="min_margin_percent">20.0</field>
+            <field name="margin_alert_mode">block</field>
+        </record>
+
+        <!-- Low Margin - Block Mode (Power Supply) -->
+        <record id="demo_product_power_supply" model="product.template">
+            <field name="name">Titanium Modular Power Supply 850W</field>
+            <field name="default_code">PSU-850W-MOD</field>
+            <field name="type">consu</field>
+            <field name="list_price">95.00</field>
+            <field name="standard_price">88.00</field>
+            <field name="margin_monitoring_enabled">True</field>
+            <field name="min_margin_percent">18.0</field>
+            <field name="margin_alert_mode">block</field>
+        </record>
+
+        <!-- Loss-Making - Block Mode (Clearance Adapter) -->
+        <record id="demo_product_loss_adapter" model="product.template">
+            <field name="name">Legacy High-Voltage DisplayPort Adapter (Clearance)</field>
+            <field name="default_code">ADP-CLR-LEGACY</field>
+            <field name="type">consu</field>
+            <field name="list_price">14.00</field>
+            <field name="standard_price">19.00</field>
+            <field name="margin_monitoring_enabled">True</field>
+            <field name="min_margin_percent">15.0</field>
+            <field name="margin_alert_mode">block</field>
+        </record>
+
+        <!-- Loss-Making - Block Mode (Promotional Keyboard) -->
+        <record id="demo_product_loss_keyboard" model="product.template">
+            <field name="name">Promotional Mechanical RGB Keyboard</field>
+            <field name="default_code">KB-RGB-PROMO</field>
+            <field name="type">consu</field>
+            <field name="list_price">30.00</field>
+            <field name="standard_price">42.00</field>
+            <field name="margin_monitoring_enabled">True</field>
+            <field name="min_margin_percent">20.0</field>
+            <field name="margin_alert_mode">block</field>
+        </record>
+
+    </data>
+</odoo>

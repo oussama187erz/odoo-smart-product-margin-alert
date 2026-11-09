@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Top-Level Application Menu: Margin Intelligence -->
+    <menuitem id="menu_smart_product_margin_root"
+              name="Margin Intelligence"
+              web_icon="smart_product_margin_alert,static/description/icon.png"
+              sequence="20"
+              groups="smart_product_margin_alert.group_margin_user"/>
+
+    <!-- Dashboard -->
+    <menuitem id="menu_smart_margin_dashboard"
+              name="Dashboard"
+              parent="menu_smart_product_margin_root"
+              action="action_product_margin_intelligence_dashboard"
+              sequence="10"
+              groups="smart_product_margin_alert.group_margin_user"/>
+
+    <!-- Product Margin Monitor -->
+    <menuitem id="menu_smart_margin_monitor"
+              name="Margin Monitor"
+              parent="menu_smart_product_margin_root"
+              action="action_product_margin_monitor"
+              sequence="20"
+              groups="smart_product_margin_alert.group_margin_user"/>
+
+    <!-- Sales Orders Compliance -->
+    <menuitem id="menu_smart_margin_sales_compliance"
+              name="Sales Compliance"
+              parent="menu_smart_product_margin_root"
+              action="action_orders_margin_compliance"
+              sequence="30"
+              groups="smart_product_margin_alert.group_margin_user"/>
+
+    <!-- Configuration Settings -->
+    <menuitem id="menu_smart_margin_settings"
+              name="Configuration"
+              parent="menu_smart_product_margin_root"
+              action="action_smart_margin_configuration"
+              sequence="90"
+              groups="smart_product_margin_alert.group_margin_manager"/>
+
+    <!-- Native Sales Menu Integration -->
+    <menuitem id="menu_sale_product_margin_monitor"
+              name="Margin Monitor"
+              parent="sale.product_menu_catalog"
+              action="action_product_margin_monitor"
+              sequence="25"
+              groups="smart_product_margin_alert.group_margin_user"/>
+
+    <menuitem id="menu_sale_margin_intelligence_dashboard"
+              name="Margin Intelligence"
+              parent="sale.menu_sale_report"
+              action="action_product_margin_intelligence_dashboard"
+              sequence="5"
+              groups="smart_product_margin_alert.group_margin_user"/>
+
+</odoo>

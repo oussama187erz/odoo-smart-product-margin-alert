@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_smart_margin" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.smart.margin</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority" eval="70"/>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Margin Intelligence" string="Margin Intelligence" name="smart_product_margin_alert" groups="smart_product_margin_alert.group_margin_manager">
+                    <block title="Global Margin Policies &amp; Thresholds" name="margin_policies_block">
+                        <setting id="default_min_margin_setting" string="Default Minimum Margin (%)" help="Baseline minimum gross profit margin required on newly monitored products.">
+                            <div class="content-group">
+                                <div class="mt8 d-flex align-items-center">
+                                    <field name="default_min_margin_percent" class="oe_inline"/>
+                                    <span class="ms-1 fw-bold">%</span>
+                                </div>
+                            </div>
+                        </setting>
+
+                        <setting id="default_margin_alert_mode_setting" string="Default Alert Mode" help="Default behavior during sales when line profit margin falls below minimum.">
+                            <div class="content-group">
+                                <div class="mt8">
+                                    <field name="default_margin_alert_mode"/>
+                                </div>
+                            </div>
+                        </setting>
+                    </block>
+
+                    <block title="Compliance &amp; Governance" name="margin_governance_block">
+                        <setting id="allow_manager_margin_override_setting" string="Manager Margin Override" help="Empowers authorized Margin Compliance Managers to override blocks and confirm sales orders with low margins.">
+                            <field name="allow_manager_margin_override"/>
+                        </setting>
+
+                        <setting id="notify_low_margin_confirmation_setting" string="Chatter Audit Logging" help="Automatically records a detailed compliance audit note in the order Chatter whenever confirmed with low margin items.">
+                            <field name="notify_low_margin_confirmation"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_smart_margin_configuration" model="ir.actions.act_window">
+        <field name="name">Settings</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+        <field name="context">{'module': 'smart_product_margin_alert', 'bin_size': False}</field>
+    </record>
+</odoo>

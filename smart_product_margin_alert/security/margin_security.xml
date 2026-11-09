@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="module_category_smart_margin" model="ir.module.category">
+        <field name="name">Margin Intelligence</field>
+        <field name="description">Manage product profitability, margin alert thresholds, and compliance controls.</field>
+        <field name="sequence">25</field>
+    </record>
+
+    <record id="group_margin_user" model="res.groups">
+        <field name="name">User / Viewer</field>
+        <field name="category_id" ref="module_category_smart_margin"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        <field name="comment">Can view the Product Margin Intelligence Dashboard and Margin Monitor reports.</field>
+    </record>
+
+    <record id="group_margin_manager" model="res.groups">
+        <field name="name">Compliance Manager</field>
+        <field name="category_id" ref="module_category_smart_margin"/>
+        <field name="implied_ids" eval="[(4, ref('group_margin_user'))]"/>
+        <field name="comment">Full management rights over margin thresholds, policies, and authorization to override blocked sales orders.</field>
+    </record>
+
+    <!-- Assign Admin to Manager group automatically -->
+    <record id="base.default_user" model="res.users">
+        <field name="groups_id" eval="[(4, ref('group_margin_manager'))]"/>
+    </record>
+</odoo>

@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Inherit Sale Order Form View -->
+    <record id="view_order_form_smart_margin_inherit" model="ir.ui.view">
+        <field name="name">sale.order.form.smart.margin.inherit</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="priority" eval="30"/>
+        <field name="arch" type="xml">
+
+            <!-- Invisible Helper Fields -->
+            <xpath expr="//sheet" position="inside">
+                <field name="has_low_margin_lines" invisible="1"/>
+                <field name="has_blocked_margin_lines" invisible="1"/>
+                <field name="margin_approval_state" invisible="1"/>
+            </xpath>
+
+            <!-- Prominent Visual Alert Banners above Notebook -->
+            <xpath expr="//notebook" position="before">
+
+                <!-- Danger Banner: Blocked Lines (Action Required) -->
+                <div class="alert alert-danger d-flex align-items-center justify-content-between p-3 mb-3 rounded-3 shadow-sm"
+                     role="alert"
+                     invisible="not has_blocked_margin_lines or margin_approval_state == 'overridden' or state in ['sale', 'cancel']">
+                    <div class="d-flex align-items-center">
+                        <i class="fa fa-ban fa-2x text-danger me-3"></i>
+                        <div>
+                            <h6 class="alert-heading fw-bold mb-1 text-danger">
+                                Sales Confirmation Blocked — Margin Compliance Violation
+                            </h6>
+                            <p class="mb-0 small text-dark">
+                                One or more items in this order are priced below the minimum gross margin requirement and governed by the 
+                                <strong>Block Sales Confirmation</strong> policy. Order confirmation will be rejected unless unit prices are increased or an authorized manager overrides this block.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="ms-3">
+                        <button name="action_override_margin_block"
+                                type="object"
+                                string="Manager Override"
+                                icon="fa-shield"
+                                class="btn btn-danger btn-sm fw-bold px-3 py-2 text-nowrap"
+                                groups="smart_product_margin_alert.group_margin_manager"
+                                help="Authorize confirmation of this sales order despite low margin lines."/>
+                    </div>
+                </div>
+
+                <!-- Warning Banner: Low Margin (Non-blocking) -->
+                <div class="alert alert-warning d-flex align-items-center p-3 mb-3 rounded-3 shadow-sm"
+                     role="alert"
+                     invisible="not has_low_margin_lines or has_blocked_margin_lines or margin_approval_state == 'overridden' or state in ['sale', 'cancel']">
+                    <i class="fa fa-exclamation-triangle fa-2x text-warning me-3"></i>
+                    <div>
+                        <h6 class="alert-heading fw-bold mb-1 text-dark">
+                            Low Margin Warning — Target Threshold Not Met
+                        </h6>
+                        <p class="mb-0 small text-secondary">
+                            Some lines in this order have profit margins below company target standards. Order confirmation is permitted, and a compliance log note will be recorded upon confirmation.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Success Banner: Manager Overridden -->
+                <div class="alert alert-info d-flex align-items-center p-3 mb-3 rounded-3 shadow-sm"
+                     role="alert"
+                     invisible="margin_approval_state != 'overridden' or state in ['sale', 'cancel']">
+                    <i class="fa fa-check-circle fa-2x text-info me-3"></i>
+                    <div>
+                        <h6 class="alert-heading fw-bold mb-1 text-info">
+                            Margin Compliance Block Overridden
+                        </h6>
+                        <p class="mb-0 small text-dark">
+                            Margin restrictions have been authorized by 
+                            <field name="margin_overridden_by_id" class="fw-bold" readonly="1"/> 
+                            on <field name="margin_override_date" class="fw-bold" readonly="1"/>. Confirmation is authorized.
+                        </p>
+                    </div>
+                </div>
+
+            </xpath>
+
+            <!-- Add Margin Details in Sales Order Line List View -->
+            <xpath expr="//field[@name='order_line']/list//field[@name='price_subtotal']" position="after">
+                <field name="has_margin_warning" column_invisible="True"/>
+                <field name="is_margin_blocked" column_invisible="True"/>
+                <field name="line_margin_percent" string="Margin (%)" optional="show"
+                       decoration-danger="margin_status == 'negative'"
+                       decoration-warning="margin_status == 'low'"
+                       decoration-success="margin_status == 'healthy'"/>
+                <field name="min_margin_percent" string="Target (%)" optional="hide"/>
+                <field name="margin_status" string="Margin Status" widget="badge" optional="show"
+                       decoration-danger="margin_status == 'negative'"
+                       decoration-warning="margin_status == 'low'"
+                       decoration-success="margin_status == 'healthy'"/>
+                <field name="margin_alert_mode" string="Policy" widget="badge" optional="hide"
+                       decoration-danger="margin_alert_mode == 'block'"
+                       decoration-warning="margin_alert_mode == 'warning'"
+                       decoration-muted="margin_alert_mode == 'disabled'"/>
+            </xpath>
+
+            <!-- Add Margin Intelligence Group in Order Line Form Popup -->
+            <xpath expr="//field[@name='order_line']/form//group" position="after">
+                <group string="Margin Intelligence" name="group_line_margin_intelligence" groups="smart_product_margin_alert.group_margin_user">
+                    <group>
+                        <field name="margin_monitoring_enabled" readonly="1"/>
+                        <field name="min_margin_percent" readonly="1"/>
+                        <field name="margin_alert_mode" readonly="1"/>
+                    </group>
+                    <group>
+                        <field name="line_margin_percent" readonly="1"
+                               decoration-danger="margin_status == 'negative'"
+                               decoration-warning="margin_status == 'low'"
+                               decoration-success="margin_status == 'healthy'"/>
+                        <field name="margin_status" widget="badge" readonly="1"
+                               decoration-danger="margin_status == 'negative'"
+                               decoration-warning="margin_status == 'low'"
+                               decoration-success="margin_status == 'healthy'"/>
+                        <field name="margin_alert_badge" readonly="1"/>
+                    </group>
+                </group>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- Filter Sales Orders by Margin State in Search View -->
+    <record id="view_sales_order_filter_smart_margin_inherit" model="ir.ui.view">
+        <field name="name">sale.order.list.select.smart.margin.inherit</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_sales_order_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='my_sale_orders_filter']" position="after">
+                <separator/>
+                <filter string="Blocked by Margin" name="filter_margin_blocked" domain="[('margin_approval_state', '=', 'blocked'), ('state', 'not in', ['sale', 'cancel'])]"/>
+                <filter string="Low Margin Orders" name="filter_low_margin" domain="[('has_low_margin_lines', '=', True), ('state', 'not in', ['sale', 'cancel'])]"/>
+                <filter string="Manager Overridden" name="filter_margin_overridden" domain="[('margin_approval_state', '=', 'overridden')]"/>
+            </xpath>
+            <xpath expr="//group" position="inside">
+                <filter string="Margin Compliance State" name="group_margin_approval_state" context="{'group_by': 'margin_approval_state'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Dedicated Action for Low-Margin / Blocked Orders -->
+    <record id="action_orders_margin_compliance" model="ir.actions.act_window">
+        <field name="name">Margin Compliance Orders</field>
+        <field name="res_model">sale.order</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="search_view_id" ref="sale.view_sales_order_filter"/>
+        <field name="context">{'search_default_filter_low_margin': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No orders requiring margin compliance review
+            </p>
+            <p>
+                Sales orders containing low-margin or blocked products will appear here for review and manager authorization.
+            </p>
+        </field>
+    </record>
+
+</odoo>
